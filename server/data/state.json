@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "savedAt": "2026-07-04T11:05:53.807Z",
+  "savedAt": "2026-07-04T11:06:53.569Z",
   "devices": [
     {
       "deviceId": "drawing_room_fan_1",
@@ -146,7 +146,7 @@
       "message": "Light 2 in \"Drawing Room\" is ON after office hours (17:00)",
       "severity": "WARNING",
       "deviceId": "drawing_room_light_2",
-      "triggeredAt": "2026-07-04T11:02:53.546Z",
+      "triggeredAt": "2026-07-04T11:06:53.561Z",
       "resolvedAt": null,
       "meta": "{\"deviceType\":\"light\",\"powerDraw\":15}"
     },
@@ -157,7 +157,7 @@
       "message": "Light 3 in \"Drawing Room\" is ON after office hours (17:00)",
       "severity": "WARNING",
       "deviceId": "drawing_room_light_3",
-      "triggeredAt": "2026-07-04T11:04:53.553Z",
+      "triggeredAt": "2026-07-04T11:06:53.566Z",
       "resolvedAt": null,
       "meta": "{\"deviceType\":\"light\",\"powerDraw\":15}"
     },
@@ -201,7 +201,7 @@
       "message": "Light 1 in \"Work Room 2\" is ON after office hours (17:00)",
       "severity": "WARNING",
       "deviceId": "work_room_2_light_1",
-      "triggeredAt": "2026-07-04T11:03:53.578Z",
+      "triggeredAt": "2026-07-04T11:06:53.569Z",
       "resolvedAt": null,
       "meta": "{\"deviceType\":\"light\",\"powerDraw\":15}"
     },
