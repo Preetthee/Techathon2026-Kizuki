@@ -12,6 +12,8 @@ export interface RoomSummary {
 
 export interface UsageSummary {
   totalPowerDraw: number;
+  estimatedTodayKwh: number;
+  projectedDailyKwh: number;
   totalDevices: number;
   onCount: number;
   offCount: number;
@@ -61,10 +63,25 @@ export function getUsageSummary(): UsageSummary {
   const all = store.getAllDevices();
   const totalPowerDraw = all.reduce((sum, d) => sum + d.powerDraw, 0);
   const onCount = all.filter((d) => d.status).length;
+  const now = new Date();
+  const startOfDay = new Date(now);
+  startOfDay.setHours(0, 0, 0, 0);
+  const elapsedHoursToday = Math.max((now.getTime() - startOfDay.getTime()) / 3_600_000, 0);
+  const estimatedTodayKwh = Number(((totalPowerDraw * elapsedHoursToday) / 1000).toFixed(3));
+  const projectedDailyKwh = Number(((totalPowerDraw * 24) / 1000).toFixed(3));
   const rooms = getRoomSummaries().map(({ room, totalPowerDraw: powerDraw, onCount: rOn }) => ({
     room,
     powerDraw,
     onCount: rOn,
   }));
-  return { totalPowerDraw, totalDevices: all.length, onCount, offCount: all.length - onCount, rooms, timestamp: new Date().toISOString() };
+  return {
+    totalPowerDraw,
+    estimatedTodayKwh,
+    projectedDailyKwh,
+    totalDevices: all.length,
+    onCount,
+    offCount: all.length - onCount,
+    rooms,
+    timestamp: now.toISOString(),
+  };
 }

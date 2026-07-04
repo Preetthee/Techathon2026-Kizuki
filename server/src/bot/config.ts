@@ -12,6 +12,7 @@ const botConfig = {
   prefix:     process.env.DISCORD_PREFIX    ?? '!',
   channelId:  process.env.DISCORD_CHANNEL_ID ?? '',   // '' = respond everywhere
   apiBaseUrl: process.env.API_BASE_URL       ?? 'http://localhost:3001',
+  alertRepeatIntervalMs: parseInt(process.env.DISCORD_ALERT_REPEAT_INTERVAL_MS ?? '300000', 10),
 };
 
 export default botConfig;

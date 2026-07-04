@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "savedAt": "2026-07-04T12:05:54.129Z",
+  "savedAt": "2026-07-04T13:37:54.869Z",
   "devices": [
     {
       "deviceId": "drawing_room_fan_1",
@@ -61,9 +61,9 @@
       "name": "Fan 2",
       "room": "Work Room 1",
       "type": "fan",
-      "status": true,
-      "powerDraw": 60,
-      "lastChanged": "2026-07-04T10:49:46.487Z"
+      "status": false,
+      "powerDraw": 0,
+      "lastChanged": "2026-07-04T13:13:34.226Z"
     },
     {
       "deviceId": "work_room_1_light_1",
@@ -146,7 +146,7 @@
       "message": "Light 2 in \"Drawing Room\" is ON after office hours (17:00)",
       "severity": "WARNING",
       "deviceId": "drawing_room_light_2",
-      "triggeredAt": "2026-07-04T12:04:54.127Z",
+      "triggeredAt": "2026-07-04T13:35:54.838Z",
       "resolvedAt": null,
       "meta": "{\"deviceType\":\"light\",\"powerDraw\":15}"
     },
@@ -157,7 +157,7 @@
       "message": "Light 3 in \"Drawing Room\" is ON after office hours (17:00)",
       "severity": "WARNING",
       "deviceId": "drawing_room_light_3",
-      "triggeredAt": "2026-07-04T12:03:54.096Z",
+      "triggeredAt": "2026-07-04T13:32:54.822Z",
       "resolvedAt": null,
       "meta": "{\"deviceType\":\"light\",\"powerDraw\":15}"
     },
@@ -168,7 +168,7 @@
       "message": "Fan 1 in \"Work Room 1\" is ON after office hours (17:00)",
       "severity": "WARNING",
       "deviceId": "work_room_1_fan_1",
-      "triggeredAt": "2026-07-04T12:00:54.081Z",
+      "triggeredAt": "2026-07-04T13:37:54.859Z",
       "resolvedAt": null,
       "meta": "{\"deviceType\":\"fan\",\"powerDraw\":60}"
     },
@@ -179,7 +179,7 @@
       "message": "Fan 1 in \"Work Room 2\" is ON after office hours (17:00)",
       "severity": "WARNING",
       "deviceId": "work_room_2_fan_1",
-      "triggeredAt": "2026-07-04T12:03:54.104Z",
+      "triggeredAt": "2026-07-04T13:37:54.863Z",
       "resolvedAt": null,
       "meta": "{\"deviceType\":\"fan\",\"powerDraw\":60}"
     },
@@ -190,7 +190,7 @@
       "message": "Fan 2 in \"Work Room 2\" is ON after office hours (17:00)",
       "severity": "WARNING",
       "deviceId": "work_room_2_fan_2",
-      "triggeredAt": "2026-07-04T12:00:54.092Z",
+      "triggeredAt": "2026-07-04T13:35:54.842Z",
       "resolvedAt": null,
       "meta": "{\"deviceType\":\"fan\",\"powerDraw\":60}"
     },
@@ -201,7 +201,7 @@
       "message": "Light 1 in \"Work Room 2\" is ON after office hours (17:00)",
       "severity": "WARNING",
       "deviceId": "work_room_2_light_1",
-      "triggeredAt": "2026-07-04T12:03:54.110Z",
+      "triggeredAt": "2026-07-04T13:35:54.845Z",
       "resolvedAt": null,
       "meta": "{\"deviceType\":\"light\",\"powerDraw\":15}"
     },
@@ -212,7 +212,7 @@
       "message": "Light 3 in \"Work Room 2\" is ON after office hours (17:00)",
       "severity": "WARNING",
       "deviceId": "work_room_2_light_3",
-      "triggeredAt": "2026-07-04T12:05:54.129Z",
+      "triggeredAt": "2026-07-04T13:35:54.850Z",
       "resolvedAt": null,
       "meta": "{\"deviceType\":\"light\",\"powerDraw\":15}"
     },
@@ -223,7 +223,7 @@
       "message": "Fan 1 in \"Drawing Room\" is ON after office hours (17:00)",
       "severity": "WARNING",
       "deviceId": "drawing_room_fan_1",
-      "triggeredAt": "2026-07-04T12:04:54.109Z",
+      "triggeredAt": "2026-07-04T13:37:54.850Z",
       "resolvedAt": null,
       "meta": "{\"deviceType\":\"fan\",\"powerDraw\":60}"
     },
@@ -234,7 +234,7 @@
       "message": "Fan 2 in \"Drawing Room\" is ON after office hours (17:00)",
       "severity": "WARNING",
       "deviceId": "drawing_room_fan_2",
-      "triggeredAt": "2026-07-04T12:04:54.118Z",
+      "triggeredAt": "2026-07-04T13:35:54.834Z",
       "resolvedAt": null,
       "meta": "{\"deviceType\":\"fan\",\"powerDraw\":60}"
     },
@@ -245,7 +245,7 @@
       "message": "Light 1 in \"Drawing Room\" is ON after office hours (17:00)",
       "severity": "WARNING",
       "deviceId": "drawing_room_light_1",
-      "triggeredAt": "2026-07-04T12:04:54.123Z",
+      "triggeredAt": "2026-07-04T13:33:54.817Z",
       "resolvedAt": null,
       "meta": "{\"deviceType\":\"light\",\"powerDraw\":15}"
     },
@@ -256,7 +256,7 @@
       "message": "Fan 2 in \"Work Room 1\" is ON after office hours (17:00)",
       "severity": "WARNING",
       "deviceId": "work_room_1_fan_2",
-      "triggeredAt": "2026-07-04T12:00:54.085Z",
+      "triggeredAt": "2026-07-04T13:33:54.832Z",
       "resolvedAt": null,
       "meta": "{\"deviceType\":\"fan\",\"powerDraw\":60}"
     },
@@ -267,7 +267,7 @@
       "message": "Light 1 in \"Work Room 1\" is ON after office hours (17:00)",
       "severity": "WARNING",
       "deviceId": "work_room_1_light_1",
-      "triggeredAt": "2026-07-04T12:04:54.131Z",
+      "triggeredAt": "2026-07-04T13:36:54.843Z",
       "resolvedAt": null,
       "meta": "{\"deviceType\":\"light\",\"powerDraw\":15}"
     },
@@ -278,7 +278,7 @@
       "message": "Light 3 in \"Work Room 1\" is ON after office hours (17:00)",
       "severity": "WARNING",
       "deviceId": "work_room_1_light_3",
-      "triggeredAt": "2026-07-04T12:05:54.117Z",
+      "triggeredAt": "2026-07-04T13:36:54.848Z",
       "resolvedAt": null,
       "meta": "{\"deviceType\":\"light\",\"powerDraw\":15}"
     },
@@ -289,7 +289,7 @@
       "message": "Light 2 in \"Work Room 2\" is ON after office hours (17:00)",
       "severity": "WARNING",
       "deviceId": "work_room_2_light_2",
-      "triggeredAt": "2026-07-04T12:05:54.124Z",
+      "triggeredAt": "2026-07-04T13:37:54.869Z",
       "resolvedAt": null,
       "meta": "{\"deviceType\":\"light\",\"powerDraw\":15}"
     },
@@ -300,12 +300,145 @@
       "message": "Light 2 in \"Work Room 1\" is ON after office hours (17:00)",
       "severity": "WARNING",
       "deviceId": "work_room_1_light_2",
-      "triggeredAt": "2026-07-04T12:04:54.134Z",
+      "triggeredAt": "2026-07-04T13:33:54.836Z",
       "resolvedAt": null,
       "meta": "{\"deviceType\":\"light\",\"powerDraw\":15}"
     }
   ],
   "recentUsage": [
+    {
+      "timestamp": "2026-07-04T13:37:53.672Z",
+      "totalSystemPower": 225,
+      "totalOnCount": 6,
+      "totalDevices": 15,
+      "roomsJson": "[{\"room\":\"Drawing Room\",\"watts\":60,\"onCount\":1,\"deviceCount\":5},{\"room\":\"Work Room 1\",\"watts\":90,\"onCount\":3,\"deviceCount\":5},{\"room\":\"Work Room 2\",\"watts\":75,\"onCount\":2,\"deviceCount\":5}]"
+    },
+    {
+      "timestamp": "2026-07-04T13:32:53.659Z",
+      "totalSystemPower": 255,
+      "totalOnCount": 8,
+      "totalDevices": 15,
+      "roomsJson": "[{\"room\":\"Drawing Room\",\"watts\":75,\"onCount\":2,\"deviceCount\":5},{\"room\":\"Work Room 1\",\"watts\":90,\"onCount\":3,\"deviceCount\":5},{\"room\":\"Work Room 2\",\"watts\":90,\"onCount\":3,\"deviceCount\":5}]"
+    },
+    {
+      "timestamp": "2026-07-04T13:27:53.659Z",
+      "totalSystemPower": 270,
+      "totalOnCount": 9,
+      "totalDevices": 15,
+      "roomsJson": "[{\"room\":\"Drawing Room\",\"watts\":75,\"onCount\":2,\"deviceCount\":5},{\"room\":\"Work Room 1\",\"watts\":90,\"onCount\":3,\"deviceCount\":5},{\"room\":\"Work Room 2\",\"watts\":105,\"onCount\":4,\"deviceCount\":5}]"
+    },
+    {
+      "timestamp": "2026-07-04T13:22:53.651Z",
+      "totalSystemPower": 285,
+      "totalOnCount": 10,
+      "totalDevices": 15,
+      "roomsJson": "[{\"room\":\"Drawing Room\",\"watts\":90,\"onCount\":3,\"deviceCount\":5},{\"room\":\"Work Room 1\",\"watts\":105,\"onCount\":4,\"deviceCount\":5},{\"room\":\"Work Room 2\",\"watts\":90,\"onCount\":3,\"deviceCount\":5}]"
+    },
+    {
+      "timestamp": "2026-07-04T13:17:53.646Z",
+      "totalSystemPower": 240,
+      "totalOnCount": 10,
+      "totalDevices": 15,
+      "roomsJson": "[{\"room\":\"Drawing Room\",\"watts\":90,\"onCount\":3,\"deviceCount\":5},{\"room\":\"Work Room 1\",\"watts\":45,\"onCount\":3,\"deviceCount\":5},{\"room\":\"Work Room 2\",\"watts\":105,\"onCount\":4,\"deviceCount\":5}]"
+    },
+    {
+      "timestamp": "2026-07-04T13:12:53.633Z",
+      "totalSystemPower": 270,
+      "totalOnCount": 9,
+      "totalDevices": 15,
+      "roomsJson": "[{\"room\":\"Drawing Room\",\"watts\":90,\"onCount\":3,\"deviceCount\":5},{\"room\":\"Work Room 1\",\"watts\":150,\"onCount\":4,\"deviceCount\":5},{\"room\":\"Work Room 2\",\"watts\":30,\"onCount\":2,\"deviceCount\":5}]"
+    },
+    {
+      "timestamp": "2026-07-04T13:07:53.621Z",
+      "totalSystemPower": 210,
+      "totalOnCount": 5,
+      "totalDevices": 15,
+      "roomsJson": "[{\"room\":\"Drawing Room\",\"watts\":60,\"onCount\":1,\"deviceCount\":5},{\"room\":\"Work Room 1\",\"watts\":90,\"onCount\":3,\"deviceCount\":5},{\"room\":\"Work Room 2\",\"watts\":60,\"onCount\":1,\"deviceCount\":5}]"
+    },
+    {
+      "timestamp": "2026-07-04T13:02:53.612Z",
+      "totalSystemPower": 210,
+      "totalOnCount": 5,
+      "totalDevices": 15,
+      "roomsJson": "[{\"room\":\"Drawing Room\",\"watts\":75,\"onCount\":2,\"deviceCount\":5},{\"room\":\"Work Room 1\",\"watts\":60,\"onCount\":1,\"deviceCount\":5},{\"room\":\"Work Room 2\",\"watts\":75,\"onCount\":2,\"deviceCount\":5}]"
+    },
+    {
+      "timestamp": "2026-07-04T12:57:53.602Z",
+      "totalSystemPower": 270,
+      "totalOnCount": 9,
+      "totalDevices": 15,
+      "roomsJson": "[{\"room\":\"Drawing Room\",\"watts\":15,\"onCount\":1,\"deviceCount\":5},{\"room\":\"Work Room 1\",\"watts\":165,\"onCount\":5,\"deviceCount\":5},{\"room\":\"Work Room 2\",\"watts\":90,\"onCount\":3,\"deviceCount\":5}]"
+    },
+    {
+      "timestamp": "2026-07-04T12:52:53.596Z",
+      "totalSystemPower": 270,
+      "totalOnCount": 9,
+      "totalDevices": 15,
+      "roomsJson": "[{\"room\":\"Drawing Room\",\"watts\":30,\"onCount\":2,\"deviceCount\":5},{\"room\":\"Work Room 1\",\"watts\":150,\"onCount\":4,\"deviceCount\":5},{\"room\":\"Work Room 2\",\"watts\":90,\"onCount\":3,\"deviceCount\":5}]"
+    },
+    {
+      "timestamp": "2026-07-04T12:47:53.594Z",
+      "totalSystemPower": 270,
+      "totalOnCount": 9,
+      "totalDevices": 15,
+      "roomsJson": "[{\"room\":\"Drawing Room\",\"watts\":30,\"onCount\":2,\"deviceCount\":5},{\"room\":\"Work Room 1\",\"watts\":75,\"onCount\":2,\"deviceCount\":5},{\"room\":\"Work Room 2\",\"watts\":165,\"onCount\":5,\"deviceCount\":5}]"
+    },
+    {
+      "timestamp": "2026-07-04T12:42:53.590Z",
+      "totalSystemPower": 120,
+      "totalOnCount": 5,
+      "totalDevices": 15,
+      "roomsJson": "[{\"room\":\"Drawing Room\",\"watts\":0,\"onCount\":0,\"deviceCount\":5},{\"room\":\"Work Room 1\",\"watts\":30,\"onCount\":2,\"deviceCount\":5},{\"room\":\"Work Room 2\",\"watts\":90,\"onCount\":3,\"deviceCount\":5}]"
+    },
+    {
+      "timestamp": "2026-07-04T12:37:53.585Z",
+      "totalSystemPower": 120,
+      "totalOnCount": 5,
+      "totalDevices": 15,
+      "roomsJson": "[{\"room\":\"Drawing Room\",\"watts\":15,\"onCount\":1,\"deviceCount\":5},{\"room\":\"Work Room 1\",\"watts\":30,\"onCount\":2,\"deviceCount\":5},{\"room\":\"Work Room 2\",\"watts\":75,\"onCount\":2,\"deviceCount\":5}]"
+    },
+    {
+      "timestamp": "2026-07-04T12:32:53.584Z",
+      "totalSystemPower": 285,
+      "totalOnCount": 10,
+      "totalDevices": 15,
+      "roomsJson": "[{\"room\":\"Drawing Room\",\"watts\":30,\"onCount\":2,\"deviceCount\":5},{\"room\":\"Work Room 1\",\"watts\":90,\"onCount\":3,\"deviceCount\":5},{\"room\":\"Work Room 2\",\"watts\":165,\"onCount\":5,\"deviceCount\":5}]"
+    },
+    {
+      "timestamp": "2026-07-04T12:27:53.583Z",
+      "totalSystemPower": 135,
+      "totalOnCount": 6,
+      "totalDevices": 15,
+      "roomsJson": "[{\"room\":\"Drawing Room\",\"watts\":75,\"onCount\":2,\"deviceCount\":5},{\"room\":\"Work Room 1\",\"watts\":30,\"onCount\":2,\"deviceCount\":5},{\"room\":\"Work Room 2\",\"watts\":30,\"onCount\":2,\"deviceCount\":5}]"
+    },
+    {
+      "timestamp": "2026-07-04T12:22:53.580Z",
+      "totalSystemPower": 360,
+      "totalOnCount": 9,
+      "totalDevices": 15,
+      "roomsJson": "[{\"room\":\"Drawing Room\",\"watts\":120,\"onCount\":2,\"deviceCount\":5},{\"room\":\"Work Room 1\",\"watts\":90,\"onCount\":3,\"deviceCount\":5},{\"room\":\"Work Room 2\",\"watts\":150,\"onCount\":4,\"deviceCount\":5}]"
+    },
+    {
+      "timestamp": "2026-07-04T12:17:53.577Z",
+      "totalSystemPower": 300,
+      "totalOnCount": 8,
+      "totalDevices": 15,
+      "roomsJson": "[{\"room\":\"Drawing Room\",\"watts\":150,\"onCount\":4,\"deviceCount\":5},{\"room\":\"Work Room 1\",\"watts\":60,\"onCount\":1,\"deviceCount\":5},{\"room\":\"Work Room 2\",\"watts\":90,\"onCount\":3,\"deviceCount\":5}]"
+    },
+    {
+      "timestamp": "2026-07-04T12:12:53.575Z",
+      "totalSystemPower": 255,
+      "totalOnCount": 8,
+      "totalDevices": 15,
+      "roomsJson": "[{\"room\":\"Drawing Room\",\"watts\":135,\"onCount\":3,\"deviceCount\":5},{\"room\":\"Work Room 1\",\"watts\":30,\"onCount\":2,\"deviceCount\":5},{\"room\":\"Work Room 2\",\"watts\":90,\"onCount\":3,\"deviceCount\":5}]"
+    },
+    {
+      "timestamp": "2026-07-04T12:07:53.572Z",
+      "totalSystemPower": 315,
+      "totalOnCount": 9,
+      "totalDevices": 15,
+      "roomsJson": "[{\"room\":\"Drawing Room\",\"watts\":60,\"onCount\":1,\"deviceCount\":5},{\"room\":\"Work Room 1\",\"watts\":105,\"onCount\":4,\"deviceCount\":5},{\"room\":\"Work Room 2\",\"watts\":150,\"onCount\":4,\"deviceCount\":5}]"
+    },
     {
       "timestamp": "2026-07-04T12:02:53.568Z",
       "totalSystemPower": 270,

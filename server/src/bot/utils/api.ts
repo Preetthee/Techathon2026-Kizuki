@@ -34,6 +34,8 @@ export interface RoomUsage {
 
 export interface UsageSummary {
   totalPowerDraw: number;
+  estimatedTodayKwh: number;
+  projectedDailyKwh: number;
   totalDevices: number;
   onCount: number;
   offCount: number;

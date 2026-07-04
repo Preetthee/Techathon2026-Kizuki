@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "author": "Office Power Monitor",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "board-esp32-devkit-c-v4", "id": "esp", "top": 48, "left": 64, "attrs": {} },
+    { "type": "wokwi-led", "id": "fan1_state", "top": 24, "left": 410, "attrs": { "color": "cyan", "label": "Fan 1 State" } },
+    { "type": "wokwi-led", "id": "fan2_state", "top": 92, "left": 410, "attrs": { "color": "cyan", "label": "Fan 2 State" } },
+    { "type": "wokwi-led", "id": "light1_state", "top": 160, "left": 410, "attrs": { "color": "yellow", "label": "Light 1 State" } },
+    { "type": "wokwi-led", "id": "light2_state", "top": 228, "left": 410, "attrs": { "color": "yellow", "label": "Light 2 State" } },
+    { "type": "wokwi-led", "id": "light3_state", "top": 296, "left": 410, "attrs": { "color": "yellow", "label": "Light 3 State" } },
+    { "type": "wokwi-potentiometer", "id": "current_sensor", "top": 380, "left": 410, "attrs": { "label": "ACS712 Current Sensor" } }
+  ],
+  "connections": [
+    [ "esp:18", "fan1_state:A", "green", [ "h0" ] ],
+    [ "esp:19", "fan2_state:A", "green", [ "h0" ] ],
+    [ "esp:21", "light1_state:A", "green", [ "h0" ] ],
+    [ "esp:22", "light2_state:A", "green", [ "h0" ] ],
+    [ "esp:23", "light3_state:A", "green", [ "h0" ] ],
+    [ "fan1_state:C", "esp:GND.1", "black", [ "h0" ] ],
+    [ "fan2_state:C", "esp:GND.1", "black", [ "h0" ] ],
+    [ "light1_state:C", "esp:GND.1", "black", [ "h0" ] ],
+    [ "light2_state:C", "esp:GND.1", "black", [ "h0" ] ],
+    [ "light3_state:C", "esp:GND.1", "black", [ "h0" ] ],
+    [ "current_sensor:SIG", "esp:34", "green", [ "h0" ] ],
+    [ "current_sensor:VCC", "esp:3V3", "red", [ "h0" ] ],
+    [ "current_sensor:GND", "esp:GND.2", "black", [ "h0" ] ]
+  ],
+  "dependencies": {}
+}

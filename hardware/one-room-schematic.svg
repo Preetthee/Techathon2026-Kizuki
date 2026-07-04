@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760">
+  <rect width="1200" height="760" fill="#0b1020"/>
+  <style>
+    text { font-family: Arial, sans-serif; fill: #e8f0ff; }
+    .title { font-size: 30px; font-weight: 700; }
+    .label { font-size: 18px; font-weight: 700; }
+    .small { font-size: 14px; fill: #b9c7df; }
+    .box { fill: #111a2e; stroke: #6db7ff; stroke-width: 2; rx: 12; }
+    .load { fill: #1b263d; stroke: #f6c453; stroke-width: 2; rx: 10; }
+    .sense { fill: #14251e; stroke: #4ade80; stroke-width: 2; rx: 10; }
+    .wire { stroke: #8fb3d9; stroke-width: 3; fill: none; }
+    .power { stroke: #f87171; stroke-width: 4; fill: none; }
+    .signal { stroke: #4ade80; stroke-width: 3; fill: none; stroke-dasharray: 8 6; }
+  </style>
+
+  <text x="48" y="54" class="title">Representative One-Room Hardware Schematic</text>
+  <text x="48" y="84" class="small">Repeat this block for Drawing Room, Work Room 1, and Work Room 2. One room = 2 fans + 3 lights.</text>
+
+  <rect x="70" y="145" width="250" height="330" class="box"/>
+  <text x="110" y="190" class="label">ESP32 Controller</text>
+  <text x="110" y="225" class="small">GPIO 18 - Fan 1 state</text>
+  <text x="110" y="250" class="small">GPIO 19 - Fan 2 state</text>
+  <text x="110" y="275" class="small">GPIO 21 - Light 1 state</text>
+  <text x="110" y="300" class="small">GPIO 22 - Light 2 state</text>
+  <text x="110" y="325" class="small">GPIO 23 - Light 3 state</text>
+  <text x="110" y="350" class="small">GPIO 34 - ACS712 analog</text>
+  <text x="110" y="395" class="small">Wi-Fi sends readings to backend</text>
+  <text x="110" y="420" class="small">Payload: status, watts, room, timestamp</text>
+
+  <rect x="430" y="125" width="260" height="105" class="sense"/>
+  <text x="460" y="164" class="label">State Sensing</text>
+  <text x="460" y="194" class="small">Optocoupler / relay feedback inputs</text>
+
+  <rect x="430" y="295" width="260" height="105" class="sense"/>
+  <text x="460" y="334" class="label">Current Sensor</text>
+  <text x="460" y="364" class="small">ACS712 room-level current reading</text>
+
+  <rect x="430" y="465" width="260" height="105" class="box"/>
+  <text x="460" y="504" class="label">5V Relay Module</text>
+  <text x="460" y="534" class="small">One channel per fan/light load</text>
+
+  <rect x="810" y="98" width="230" height="70" class="load"/>
+  <text x="875" y="140" class="label">Fan 1</text>
+  <rect x="810" y="185" width="230" height="70" class="load"/>
+  <text x="875" y="227" class="label">Fan 2</text>
+  <rect x="810" y="272" width="230" height="70" class="load"/>
+  <text x="865" y="314" class="label">Light 1</text>
+  <rect x="810" y="359" width="230" height="70" class="load"/>
+  <text x="865" y="401" class="label">Light 2</text>
+  <rect x="810" y="446" width="230" height="70" class="load"/>
+  <text x="865" y="488" class="label">Light 3</text>
+
+  <rect x="810" y="590" width="230" height="70" class="box"/>
+  <text x="858" y="632" class="label">AC Supply</text>
+
+  <path class="signal" d="M320 220 C365 220, 380 175, 430 175"/>
+  <path class="signal" d="M320 350 C370 350, 380 350, 430 350"/>
+  <path class="wire" d="M690 518 C745 518, 750 132, 810 132"/>
+  <path class="wire" d="M690 518 C745 518, 750 220, 810 220"/>
+  <path class="wire" d="M690 518 C745 518, 750 307, 810 307"/>
+  <path class="wire" d="M690 518 C745 518, 750 394, 810 394"/>
+  <path class="wire" d="M690 518 C745 518, 750 481, 810 481"/>
+
+  <path class="power" d="M925 590 L925 516"/>
+  <path class="power" d="M925 590 L925 168"/>
+  <path class="power" d="M948 590 L948 255"/>
+  <path class="power" d="M970 590 L970 342"/>
+  <path class="power" d="M992 590 L992 429"/>
+
+  <text x="78" y="620" class="small">Dashboard/Bot side: ESP32 readings would POST to backend or publish over MQTT/WebSocket.</text>
+  <text x="78" y="646" class="small">Hackathon implementation simulates this device layer in software while keeping the same fields and data flow.</text>
+  <text x="78" y="690" class="small">Device fields: room, device name, on/off status, realistic wattage, last-changed timestamp.</text>
+</svg>

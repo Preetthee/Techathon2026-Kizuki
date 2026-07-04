@@ -56,6 +56,7 @@ npm start
 | `DISCORD_GUILD_ID` | ☐ | — | Guild ID for guild-specific slash commands (faster deployment) |
 | `DISCORD_PREFIX` | ☐ | `!` | Text command prefix |
 | `DISCORD_CHANNEL_ID` | ☐ | *(all)* | Restrict bot to one channel ID |
+| `DISCORD_ALERT_REPEAT_INTERVAL_MS` | ☐ | `300000` | Repeat active alert reminders while alerts remain active (`0` disables) |
 | `API_BASE_URL` | ✅ | `http://localhost:3001` | Backend server URL |
 | `AI_PROVIDER` | ☐ | `deepseek` | `openai` / `gemini` / `deepseek` / `ollama` |
 | `DEEPSEEK_API_KEY` | ☐ | — | Required if `AI_PROVIDER=deepseek` |

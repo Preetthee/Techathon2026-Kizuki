@@ -14,6 +14,7 @@ const config = {
   guildId:   process.env.DISCORD_GUILD_ID    ?? '',
   prefix:    process.env.DISCORD_PREFIX      ?? '!',
   channelId: process.env.DISCORD_CHANNEL_ID  ?? '',
+  alertRepeatIntervalMs: parseInt(process.env.DISCORD_ALERT_REPEAT_INTERVAL_MS ?? '300000', 10),
 
   // Backend
   apiBaseUrl: process.env.API_BASE_URL ?? 'http://localhost:3001',

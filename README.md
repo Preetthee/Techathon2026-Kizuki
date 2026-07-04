@@ -8,6 +8,15 @@ answers, and a Discord bot for command-based access.
 
 ![A High-Level System Diagram](./A%20High-Level%20System%20Diagram.gif)
 
+## Hardware / Electrical Schematic
+
+The representative one-room circuit is included in
+[`hardware/`](./hardware/README.md). It shows an ESP32 reading 2 fan states,
+3 light states, and a room-level current sensor. The same circuit is repeated
+for all three rooms.
+
+![One Room Hardware Schematic](./hardware/one-room-schematic.svg)
+
 ## What This Project Does
 
 - Tracks 15 simulated devices across three rooms.
@@ -17,6 +26,7 @@ answers, and a Discord bot for command-based access.
 - Exposes REST APIs for dashboards, analytics, alerts, and AI questions.
 - Provides a Discord bot with live commands and critical alert push messages.
 - Supports AI providers including OpenAI, Gemini, DeepSeek, and Ollama.
+- Includes required system and hardware diagrams in the repository.
 
 ## Project Layout
 
@@ -25,6 +35,7 @@ answers, and a Discord bot for command-based access.
 | `src/` | React + Vite frontend dashboard |
 | `server/` | Express API, Socket.IO, storage, simulator, alerts, and AI service |
 | `bot/` | Standalone Discord bot that talks to the backend over REST and Socket.IO |
+| `hardware/` | Representative ESP32/Wokwi-style one-room circuit schematic |
 | `guidelines/` | Project notes and implementation guidelines |
 
 The server also contains an in-process Discord bot under `server/src/bot/`.
@@ -50,6 +61,7 @@ From the project root:
 
 ```bash
 npm install
+copy .env.example .env
 npm run dev
 ```
 
@@ -77,7 +89,7 @@ On macOS or Linux, use `cp .env.example .env` instead of `copy`.
 | --- | --- | --- |
 | `!status` | `!s`, `!devices`, `!all` | Show all rooms and live device wattage |
 | `!room <name>` | `!r` | Show detailed status for one room |
-| `!usage` | `!u`, `!power`, `!watts` | Show total and per-room power usage |
+| `!usage` | `!u`, `!power`, `!watts` | Show live watts, today's estimated kWh, and per-room usage |
 | `!alerts` | `!a`, `!warn`, `!warnings` | Show active alerts |
 | `!ask <question>` | `!ai`, `!q`, `!query` | Ask the AI assistant about the live office state |
 | `!help` | `!h`, `!?`, `!commands` | Show the command list |
@@ -110,6 +122,7 @@ Each runtime has its own example file:
 
 | Project | Example File | Notes |
 | --- | --- | --- |
+| Frontend | `.env.example` | Backend API base URL for the dashboard |
 | Backend | `server/.env.example` | API port, storage, MongoDB, AI providers, office rules |
 | Discord bot | `bot/.env.example` | Discord credentials and backend URL |
 
@@ -148,6 +161,8 @@ npm start
 - Run only one Discord bot process for a given token.
 - If every Discord command replies twice, stop all bot/server processes and
   start only the bot mode you intend to use.
+- Active Discord alert reminders repeat every 5 minutes by default. Change
+  `DISCORD_ALERT_REPEAT_INTERVAL_MS` in the bot env file, or set it to `0` to disable repeats.
 - SQLite/JSON state files, build output, lock files, logs, and local
   environment files are treated as local runtime artifacts.
 - More detailed backend and bot documentation is available in

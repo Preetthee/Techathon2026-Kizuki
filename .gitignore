@@ -17,7 +17,8 @@ server/data/*.db
 server/data/*.db-*
 server/data/state.json
 **/.bot.lock
-*.pid
+**/*.pid
+**/*.lock
 
 # Logs and diagnostics
 logs/
@@ -38,3 +39,12 @@ tmp/
 Thumbs.db
 .vscode/
 .idea/
+
+# Test / coverage
+coverage/
+.nyc_output/
+*.lcov
+
+# TS build info
+*.tsbuildinfo
+**/*.tsbuildinfo

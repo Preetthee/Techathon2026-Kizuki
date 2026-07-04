@@ -28,6 +28,10 @@ function formatWatts(w: number): string {
   return w >= 1000 ? `${(w / 1000).toFixed(2)} kW` : `${w} W`;
 }
 
+function formatKwh(kwh: number): string {
+  return `${kwh.toFixed(2)} kWh`;
+}
+
 function relativeTime(iso: string): string {
   const diffMs  = Date.now() - new Date(iso).getTime();
   const mins    = Math.floor(diffMs / 60_000);
@@ -136,6 +140,16 @@ export function buildUsageEmbed(usage: UsageSummary): EmbedBuilder {
       {
         name: 'Total Draw',
         value: `**${formatWatts(usage.totalPowerDraw)}**`,
+        inline: true,
+      },
+      {
+        name: 'Today Estimate',
+        value: `**${formatKwh(usage.estimatedTodayKwh)}**`,
+        inline: true,
+      },
+      {
+        name: '24h Projection',
+        value: `**${formatKwh(usage.projectedDailyKwh)}**`,
         inline: true,
       },
       {

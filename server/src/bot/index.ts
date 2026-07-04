@@ -24,7 +24,7 @@ import * as crypto from 'crypto';
 import botConfig from './config';
 import { findCommand } from './commands/registry';
 import { buildErrorEmbed } from './utils/embeds';
-import { onAlert, getAlertSummaryForBot } from '../services/alertEngine';
+import { onAlert, getAlerts } from '../services/alertEngine';
 
 function getLockPath(): string {
   const tokenHash = crypto.createHash('sha256').update(botConfig.token).digest('hex').slice(0, 16);
@@ -190,15 +190,12 @@ async function getAlertChannel() {
 }
 
 onAlert(async (alert) => {
-  // Only push CRITICAL alerts automatically; WARNING alerts surface on demand via !alerts
-  if (alert.severity !== 'CRITICAL') return;
-
   const ch = await getAlertChannel();
   if (!ch) return;
 
   const { EmbedBuilder, Colors } = await import('discord.js');
   const embed = new EmbedBuilder()
-    .setColor(Colors.Red)
+    .setColor(alert.severity === 'CRITICAL' ? Colors.Red : Colors.Yellow)
     .setTitle('🔴  Critical Alert')
     .setDescription(alert.message)
     .addFields(
@@ -211,6 +208,42 @@ onAlert(async (alert) => {
 
   await ch.send({ content: '@here', embeds: [embed] }).catch(console.error);
 });
+
+async function pushActiveAlertReminder(): Promise<void> {
+  if (!botConfig.channelId || botConfig.alertRepeatIntervalMs <= 0) return;
+
+  const alerts = getAlerts();
+  if (alerts.length === 0) return;
+
+  const ch = await getAlertChannel();
+  if (!ch) return;
+
+  const { EmbedBuilder, Colors } = await import('discord.js');
+  const critical = alerts.filter((a) => a.severity === 'CRITICAL').length;
+  const afterHours = alerts.filter((a) => a.type === 'AFTER_HOURS').length;
+  const embed = new EmbedBuilder()
+    .setColor(critical > 0 ? Colors.Red : Colors.Yellow)
+    .setTitle('Active Office Alert Reminder')
+    .setDescription(
+      `${alerts.length} alert${alerts.length === 1 ? '' : 's'} still active ` +
+      `(${afterHours} after-hours, ${critical} critical).`
+    )
+    .addFields(
+      alerts.slice(0, 10).map((alert) => ({
+        name: `${alert.severity} - ${alert.room ?? 'Office'} - ${alert.type}`,
+        value: `${alert.message}\nTriggered <t:${Math.floor(new Date(alert.timestamp).getTime() / 1000)}:R>`,
+        inline: false,
+      }))
+    )
+    .setFooter({ text: `Repeats every ${Math.round(botConfig.alertRepeatIntervalMs / 60000)} min while alerts remain active.` })
+    .setTimestamp();
+
+  await ch.send({ content: '@here', embeds: [embed] }).catch(console.error);
+}
+
+if (botConfig.alertRepeatIntervalMs > 0) {
+  setInterval(() => void pushActiveAlertReminder(), botConfig.alertRepeatIntervalMs);
+}
 
 // ─── Graceful shutdown ────────────────────────────────────────────────────────
 

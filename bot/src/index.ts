@@ -23,6 +23,7 @@ import * as crypto from 'crypto';
 import config from './config';
 import { findCommand } from './commands/registry';
 import { buildErrorEmbed } from './utils/embeds';
+import { api, type Alert } from './utils/api';
 
 // ─── Single-instance guard (file lock) ────────────────────────────────────────
 //
@@ -153,6 +154,66 @@ async function pushCriticalAlert(alert: any): Promise<void> {
   await ch.send({ content: '@here', embeds: [embed] }).catch(console.error);
 }
 
+async function pushOfficeAlert(alert: Alert | any, title = 'Office Alert'): Promise<void> {
+  const ch = await getAlertChannel();
+  if (!ch) return;
+
+  const critical = alert.severity === 'CRITICAL';
+  const embed = new EmbedBuilder()
+    .setColor(critical ? Colors.Red : Colors.Yellow)
+    .setTitle(critical ? `Critical ${title}` : title)
+    .setDescription(alert.message)
+    .addFields(
+      { name: 'Room', value: alert.room ?? 'N/A', inline: true },
+      { name: 'Type', value: alert.type, inline: true },
+      { name: 'Severity', value: alert.severity ?? 'WARNING', inline: true },
+      {
+        name: 'Triggered',
+        value: `<t:${Math.floor(new Date(alert.timestamp ?? alert.triggeredAt).getTime() / 1000)}:R>`,
+        inline: true,
+      }
+    )
+    .setFooter({ text: `Alert ID: ${alert.id ?? alert.alertId}` })
+    .setTimestamp();
+
+  await ch.send({ content: '@here', embeds: [embed] }).catch(console.error);
+}
+
+async function pushActiveAlertReminder(): Promise<void> {
+  if (!config.channelId || config.alertRepeatIntervalMs <= 0) return;
+
+  try {
+    const alerts = await api.alerts();
+    if (alerts.length === 0) return;
+
+    const ch = await getAlertChannel();
+    if (!ch) return;
+
+    const critical = alerts.filter((a) => a.severity === 'CRITICAL').length;
+    const afterHours = alerts.filter((a) => a.type === 'AFTER_HOURS').length;
+    const embed = new EmbedBuilder()
+      .setColor(critical > 0 ? Colors.Red : Colors.Yellow)
+      .setTitle('Active Office Alert Reminder')
+      .setDescription(
+        `${alerts.length} alert${alerts.length === 1 ? '' : 's'} still active ` +
+        `(${afterHours} after-hours, ${critical} critical).`
+      )
+      .addFields(
+        alerts.slice(0, 10).map((alert) => ({
+          name: `${alert.severity} - ${alert.room ?? 'Office'} - ${alert.type}`,
+          value: `${alert.message}\nTriggered <t:${Math.floor(new Date(alert.timestamp).getTime() / 1000)}:R>`,
+          inline: false,
+        }))
+      )
+      .setFooter({ text: `Repeats every ${Math.round(config.alertRepeatIntervalMs / 60000)} min while alerts remain active.` })
+      .setTimestamp();
+
+    await ch.send({ content: '@here', embeds: [embed] }).catch(console.error);
+  } catch (err: any) {
+    console.warn(`[discord] Alert reminder failed: ${err.message}`);
+  }
+}
+
 function connectToBackend(): void {
   const url = `${config.apiBaseUrl}/monitor`;
 
@@ -174,12 +235,10 @@ function connectToBackend(): void {
     console.warn(`[socket] Connection error: ${err.message} — will retry`)
   );
 
-  // Listen for new alerts and push critical ones to Discord
+  // Listen for new alerts and push them immediately to Discord.
   _socket.on('alert:new', async (payload: { alert: any; isNew: boolean }) => {
     const alert = payload?.alert ?? payload;
-    if (alert?.severity === 'CRITICAL') {
-      await pushCriticalAlert(alert);
-    }
+    if (alert) await pushOfficeAlert(alert, payload?.isNew ? 'New Office Alert' : 'Updated Office Alert');
   });
 }
 
@@ -196,6 +255,10 @@ client.once(Events.ClientReady, (c) => {
 
   // Connect to backend Socket.IO after bot is ready
   connectToBackend();
+  if (config.alertRepeatIntervalMs > 0) {
+    console.log(`[discord] Alert reminders every ${config.alertRepeatIntervalMs / 1000}s`);
+    setInterval(() => void pushActiveAlertReminder(), config.alertRepeatIntervalMs);
+  }
 });
 
 // ─── Message handler ──────────────────────────────────────────────────────────
