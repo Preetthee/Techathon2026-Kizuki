@@ -1,0 +1,25 @@
+(node:34228) [MONGOOSE] Warning: Duplicate schema index on {"timestamp":1} found. This is often due to declaring an index using both "index: true" and "schema.index()". Please remove the duplicate index definition.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[mongodb] Disconnected
+[mongodb] Initial connection failed: connect ECONNREFUSED ::1:27017, connect ECONNREFUSED 127.0.0.1:27017
+[server] MongoDB unavailable — running without analytics: connect ECONNREFUSED ::1:27017, connect ECONNREFUSED 127.0.0.1:27017
+[mongodb] Error: connect ECONNREFUSED ::1:27017, connect ECONNREFUSED 127.0.0.1:27017
+[usage-log] Initial snapshot failed: Operation `usagelogs.insertOne()` buffering timed out after 10000ms
+[alert-db] Failed to persist after_hours:drawing_room_fan_1: Operation `alerts.findOneAndUpdate()` buffering timed out after 10000ms
+[alert-db] Failed to persist after_hours:drawing_room_light_1: Operation `alerts.findOneAndUpdate()` buffering timed out after 10000ms
+[alert-db] Failed to persist after_hours:drawing_room_light_2: Operation `alerts.findOneAndUpdate()` buffering timed out after 10000ms
+[alert-db] Failed to persist after_hours:drawing_room_light_3: Operation `alerts.findOneAndUpdate()` buffering timed out after 10000ms
+[alert-db] Failed to persist after_hours:work_room_1_light_2: Operation `alerts.findOneAndUpdate()` buffering timed out after 10000ms
+[alert-db] Failed to persist after_hours:work_room_1_light_3: Operation `alerts.findOneAndUpdate()` buffering timed out after 10000ms
+[alert-db] Failed to persist after_hours:work_room_2_light_1: Operation `alerts.findOneAndUpdate()` buffering timed out after 10000ms
+[alert-db] Failed to persist after_hours:drawing_room_fan_2: Operation `alerts.findOneAndUpdate()` buffering timed out after 10000ms
+[alert-db] Failed to persist after_hours:work_room_1_fan_2: Operation `alerts.findOneAndUpdate()` buffering timed out after 10000ms
+[alert-db] Failed to persist after_hours:work_room_1_light_1: Operation `alerts.findOneAndUpdate()` buffering timed out after 10000ms
+[alert-db] Failed to persist after_hours:work_room_2_fan_1: Operation `alerts.findOneAndUpdate()` buffering timed out after 10000ms
+[alert-db] Failed to persist after_hours:work_room_2_fan_2: Operation `alerts.findOneAndUpdate()` buffering timed out after 10000ms
+[alert-db] Failed to persist after_hours:work_room_2_light_2: Operation `alerts.findOneAndUpdate()` buffering timed out after 10000ms
+[alert-db] Failed to persist after_hours:drawing_room_light_3: Operation `alerts.findOneAndUpdate()` buffering timed out after 10000ms
+[alert-db] Failed to persist after_hours:work_room_1_fan_1: Operation `alerts.findOneAndUpdate()` buffering timed out after 10000ms
+[alert-db] Failed to persist after_hours:work_room_1_light_3: Operation `alerts.findOneAndUpdate()` buffering timed out after 10000ms
+[alert-db] Failed to persist after_hours:work_room_1_fan_2: Operation `alerts.findOneAndUpdate()` buffering timed out after 10000ms
+[alert-db] Failed to persist after_hours:work_room_1_light_2: Operation `alerts.findOneAndUpdate()` buffering timed out after 10000ms
