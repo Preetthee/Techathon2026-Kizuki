@@ -104,6 +104,85 @@ export function getCannedResponse(context: OfficeContext, question: string): str
     ].join('\n');
   }
 
+  // Which lights / devices / fans are on — answered from live state
+  if (
+    /which\s+(lights?|devices?|fans?)\s+(are|is)\s+(on|running|active|turned\s+on|on\s+right\s+now)/.test(q) ||
+    /what\s+(lights?|devices?|fans?)\s+(are|is)\s+(on|running|active|turned\s+on)/.test(q) ||
+    /list\s+(the\s+)?(lights?|devices?|fans?)\s+(that\s+are\s+)?(on|running|active)/.test(q) ||
+    /show\s+(me\s+)?(the\s+)?(lights?|devices?|fans?)\s+(that\s+are\s+)?(on|running|active)/.test(q)
+  ) {
+    const wantsLights = /light/.test(q);
+    const wantsFans   = /fan/.test(q);
+    const target      = wantsLights ? 'light' : wantsFans ? 'fan' : null;
+
+    let list = context.devices;
+    if (target) list = list.filter((d) => d.type === target);
+    const on = list.filter((d) => d.status === 'ON');
+
+    if (on.length === 0) {
+      return `No ${target ?? 'devices'} are currently on. The office is drawing **${context.power.formattedWatts}** total.`;
+    }
+    const lines = on.map((d) => `• **${d.name}** in *${d.room}* (${d.powerWatts} W, on for ${d.lastChanged})`);
+    return [
+      `**${on.length} ${target ?? 'device'}${on.length === 1 ? '' : 's'} currently on:**`,
+      ...lines,
+      `Total: **${context.power.formattedWatts}**.`,
+    ].join('\n');
+  }
+
+  // What's on in a specific room — answered from live state
+  const roomMatch = q.match(/(?:what|which|whats|what's)\s+(?:is\s+)?(?:on|running|active|turned\s+on)\s+(?:in|at)\s+(?:the\s+)?([a-z][a-z0-9\s]+?)(?:\?|$)/);
+  if (roomMatch) {
+    const roomName = roomMatch[1].trim();
+    const room = context.rooms.find((r) => r.name.toLowerCase().includes(roomName));
+    if (room) {
+      const onDevices = [
+        ...room.lights.filter((l) => l.status === 'ON').map((l) => `• 💡 ${l.name} (${l.powerWatts} W)`),
+        ...room.fans.filter((f) => f.status === 'ON').map((f) => `• 🌀 ${f.name} (${f.powerWatts} W)`),
+      ];
+      if (onDevices.length === 0) {
+        return `Nothing is on in **${room.name}** right now. The room is idle.`;
+      }
+      return [
+        `**Currently on in ${room.name}:**`,
+        ...onDevices,
+        `Room load: **${room.totalPowerWatts} W** (${room.loadPercent}% of max).`,
+      ].join('\n');
+    }
+  }
+
+  // Summarize the office — answered from live state
+  if (/summar(y|ise|ize)\s+(the\s+)?(office|status|building)/.test(q) ||
+      /what.?s\s+happening|how\s+is\s+(the\s+)?office|office\s+status/.test(q) ||
+      /give\s+me\s+(a\s+)?(an?\s+)?(summary|overview|status|report)/.test(q)) {
+    const rooms = context.rooms
+      .filter((r) => r.totalPowerWatts > 0)
+      .sort((a, b) => b.totalPowerWatts - a.totalPowerWatts)
+      .slice(0, 3)
+      .map((r) => `• **${r.name}** — ${r.totalPowerWatts} W (${r.loadPercent}% load)`);
+    const alertLine = context.summary.hasAlerts
+      ? `\n⚠️ **${context.summary.criticalAlerts} critical, ${context.summary.warningAlerts} warning alerts active.**`
+      : `\n✅ No active alerts.`;
+    return [
+      `**Office status** (${context.officeStatus}, ${context.currentHour}:00):`,
+      `Power: **${context.power.formattedWatts}** from ${context.power.activeDevices}/${context.power.totalDevices} devices on.`,
+      `Highest-load rooms:`,
+      ...(rooms.length > 0 ? rooms : ['• (no active rooms)']),
+      alertLine,
+    ].join('\n');
+  }
+
+  // Anything unusual / alerts
+  if (/unusual|strange|weird|alert|warning|problem|issue|concern/.test(q)) {
+    if (context.alerts.length === 0) {
+      return `Nothing unusual — all devices are operating normally. Power: **${context.power.formattedWatts}**, ${context.power.activeDevices}/${context.power.totalDevices} devices on.`;
+    }
+    const lines = context.alerts.slice(0, 5).map(
+      (a) => `• **[${a.severity}]** ${a.type} in ${a.room ?? 'office'} — ${a.message} (${a.since})`
+    );
+    return [`⚠️ **${context.alerts.length} active alert${context.alerts.length === 1 ? '' : 's'}:**`, ...lines].join('\n');
+  }
+
   // Peak-power queries — answered from the persisted usage snapshots, no LLM call
   if (/highest\s+power|peak\s+power|power\s+(peak|record|highest|maximum|max)|max(imum)?\s+power/i.test(q)) {
     const snapshots = readRecentUsage();

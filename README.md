@@ -28,6 +28,18 @@ for all three rooms.
 - Supports AI providers including OpenAI, Gemini, DeepSeek, and Ollama.
 - Includes required system and hardware diagrams in the repository.
 
+## Epic Curcan
+
+![Epic Curcan](./Epic%20Curcan.png)
+
+The full Tinkercad schematic (one-room circuit repeated across the office) can be
+opened and edited directly in Tinkercad here:
+
+[View on Tinkercad](https://www.tinkercad.com/things/fgd9QBoa3nH/editel?returnTo=%2Fdashboard&sharecode=bjqs8btdNaRoyB-P5pxosPfGRFpVbPZPWfnItehUDnE)
+
+The export and printable version of the same wiring diagram lives in
+[`hardware/`](./hardware/README.md).
+
 ## Project Layout
 
 | Path | Purpose |
