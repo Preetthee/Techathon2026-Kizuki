@@ -8,18 +8,17 @@ export const statusCommand = {
   aliases:     ['s', 'devices', 'all'],
   description: 'Show all 15 devices grouped by room with live wattage.',
 
-  async execute(_args: string[], message: Message, _ctx: CommandContext): Promise<void> {
-    const typing = message.channel.sendTyping();
+  async execute(_args: string[], message: Message, ctx: CommandContext): Promise<void> {
+    const reply = (payload: unknown) => ctx.uniqueReply(message, payload);
+    const typing = (message.channel as unknown as { sendTyping: () => Promise<void> }).sendTyping();
 
     try {
       const rooms = await api.rooms();
       await typing;
-      await message.reply({ embeds: [buildStatusEmbed(rooms)] });
+      await reply({ embeds: [buildStatusEmbed(rooms)] });
     } catch (err: any) {
       await typing;
-      await message.reply({
-        embeds: [buildErrorEmbed(`Could not fetch device status.\n\`${err.message}\``)],
-      });
+      await reply({ embeds: [buildErrorEmbed(`Could not fetch device status.\n\`${err.message}\``)] });
     }
   },
 };

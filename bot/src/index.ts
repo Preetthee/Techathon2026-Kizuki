@@ -16,9 +16,90 @@
 
 import { Client, GatewayIntentBits, Events, Message, EmbedBuilder, Colors, TextChannel } from 'discord.js';
 import { io as ioClient, Socket } from 'socket.io-client';
+import * as fs from 'fs';
+import * as path from 'path';
+import * as os from 'os';
+import * as crypto from 'crypto';
 import config from './config';
 import { findCommand } from './commands/registry';
 import { buildErrorEmbed } from './utils/embeds';
+
+// ─── Single-instance guard (file lock) ────────────────────────────────────────
+//
+// Symptom of duplicate Discord clients: every !command produces two replies
+// because Discord fans the gateway event out to every active connection sharing
+// the token. The uniqueReply() Set can't help across two different processes.
+//
+// This lock file prevents a second instance from running at all. If the lock
+// file already exists and the PID inside it is alive, this process exits
+// immediately with code 42 so the wrapper (npm run dev / npm start) surfaces it.
+
+function getLockPath(): string {
+  const tokenHash = crypto.createHash('sha256').update(config.token).digest('hex').slice(0, 16);
+  return process.env.DISCORD_BOT_LOCK_PATH
+    ? path.resolve(process.env.DISCORD_BOT_LOCK_PATH)
+    : path.join(os.tmpdir(), `office-power-monitor-discord-bot-${tokenHash}.lock`);
+}
+
+const LOCK_PATH = getLockPath();
+
+function isPidAlive(pid: number): boolean {
+  try {
+    process.kill(pid, 0); // signal 0 = check existence only, doesn't actually kill
+    return true;
+  } catch (err: any) {
+    return err.code === 'EPERM'; // EPERM = process exists but we can't signal it
+  }
+}
+
+function acquireLock(): void {
+  if (fs.existsSync(LOCK_PATH)) {
+    try {
+      const existing = JSON.parse(fs.readFileSync(LOCK_PATH, 'utf8')) as {
+        pid: number;
+        startedAt: string;
+      };
+      if (existing?.pid && isPidAlive(existing.pid)) {
+        console.error(
+          `[discord] ABORT: another bot instance is already running ` +
+          `(pid=${existing.pid}, started=${existing.startedAt}). ` +
+          `Lock file: ${LOCK_PATH}`
+        );
+        console.error(
+          `[discord] Kill the existing process first, or delete the lock file ` +
+          `if you're sure no other bot is running.`
+        );
+        process.exit(42);
+      } else {
+        console.warn(
+          `[discord] Stale lock file found (pid=${existing?.pid} not alive). Replacing.`
+        );
+      }
+    } catch {
+      console.warn(`[discord] Unreadable lock file at ${LOCK_PATH}. Replacing.`);
+    }
+  }
+  fs.writeFileSync(
+    LOCK_PATH,
+    JSON.stringify({ pid: process.pid, startedAt: new Date().toISOString() })
+  );
+}
+
+function releaseLock(): void {
+  try {
+    if (fs.existsSync(LOCK_PATH)) {
+      const parsed = JSON.parse(fs.readFileSync(LOCK_PATH, 'utf8')) as { pid?: number };
+      if (parsed?.pid === process.pid) fs.unlinkSync(LOCK_PATH);
+    }
+  } catch {
+    /* best-effort */
+  }
+}
+
+acquireLock();
+process.on('exit',    releaseLock);
+process.on('SIGTERM', () => { releaseLock(); shutdown('SIGTERM'); });
+process.on('SIGINT',  () => { releaseLock(); shutdown('SIGINT');  });
 
 // ─── Discord client ───────────────────────────────────────────────────────────
 
@@ -119,6 +200,35 @@ client.once(Events.ClientReady, (c) => {
 
 // ─── Message handler ──────────────────────────────────────────────────────────
 
+// Unique per-process tag so duplicate-client issues are visible in the logs.
+const _instanceId = Math.random().toString(36).slice(2, 8);
+console.log(`[discord] Handler instance id: ${_instanceId} (pid=${process.pid})`);
+
+const _repliedMessages = new Set<string>();
+
+function uniqueReply(message: Message, payload: any): Promise<any> {
+  // Defensive guard — prevents the same user message from being replied to twice
+  // if the handler somehow ends up running in parallel for the same id.
+  console.log(
+    `[discord][inst=${_instanceId}] uniqueReply() called for message ${message.id} ` +
+    `author=${message.author.tag} content=${JSON.stringify(message.content).slice(0, 80)}`
+  );
+  if (_repliedMessages.has(message.id)) {
+    console.warn(
+      `[discord][inst=${_instanceId}] Skipping duplicate reply to message ${message.id} ` +
+      `(already replied by this instance)`
+    );
+    return Promise.resolve();
+  }
+  _repliedMessages.add(message.id);
+  // Auto-expire so the set doesn't grow unbounded (1 hour is plenty)
+  setTimeout(() => _repliedMessages.delete(message.id), 60 * 60 * 1000);
+  console.log(
+    `[discord][inst=${_instanceId}] SENDING reply via message.reply() for ${message.id}`
+  );
+  return message.reply(payload);
+}
+
 client.on(Events.MessageCreate, async (message: Message) => {
   if (message.author.bot) return;
   if (config.channelId && message.channelId !== config.channelId) return;
@@ -132,10 +242,15 @@ client.on(Events.MessageCreate, async (message: Message) => {
   const trigger = rawTrigger?.toLowerCase();
   if (!trigger) return;
 
+  console.log(
+    `[discord][inst=${_instanceId}] MessageCreate received: ` +
+    `msgId=${message.id} trigger=${trigger} args=${JSON.stringify(args)}`
+  );
+
   const command = findCommand(trigger);
 
   if (!command) {
-    await message.reply({
+    await uniqueReply(message, {
       embeds: [
         buildErrorEmbed(
           `Unknown command: \`${config.prefix}${trigger}\`\n` +
@@ -147,14 +262,28 @@ client.on(Events.MessageCreate, async (message: Message) => {
   }
 
   try {
-    await command.execute(args, message, { prefix: config.prefix });
+    console.log(
+      `[discord][inst=${_instanceId}] About to call ${trigger}Command.execute() for msg ${message.id}`
+    );
+    await command.execute(args, message, { prefix: config.prefix, uniqueReply });
+    console.log(
+      `[discord][inst=${_instanceId}] ${trigger}Command.execute() resolved for msg ${message.id}`
+    );
   } catch (err: any) {
     console.error(`[discord] Unhandled error in command "${trigger}":`, err);
-    await message.reply({
+    await uniqueReply(message, {
       embeds: [buildErrorEmbed(`An unexpected error occurred: \`${err.message}\``)],
     }).catch(() => {});
   }
 });
+
+// Listener counts AFTER registration — should be exactly 1 each.
+console.log(
+  `[discord] MessageCreate listener count: ${client.listenerCount(Events.MessageCreate)}`
+);
+console.log(
+  `[discord] InteractionCreate listener count: ${client.listenerCount(Events.InteractionCreate)}`
+);
 
 // ─── Graceful shutdown ────────────────────────────────────────────────────────
 
@@ -162,11 +291,12 @@ function shutdown(signal: string): void {
   console.log(`[discord] ${signal} — shutting down`);
   _socket?.disconnect();
   client.destroy();
+  // releaseLock() runs via the 'exit' handler installed at the top of the file.
   process.exit(0);
 }
 
-process.on('SIGTERM', () => shutdown('SIGTERM'));
-process.on('SIGINT',  () => shutdown('SIGINT'));
+// Note: SIGTERM/SIGINT handlers are installed at the top of the file (right
+// after acquireLock) so they can release the lock file before exiting.
 
 // ─── Login ────────────────────────────────────────────────────────────────────
 

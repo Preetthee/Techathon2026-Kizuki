@@ -27,10 +27,11 @@ export const askCommand = {
   description: 'Ask the AI assistant about the office. Usage: `!ask <question>`',
 
   async execute(args: string[], message: Message, ctx: CommandContext): Promise<void> {
+    const reply = (payload: unknown) => ctx.uniqueReply(message, payload);
     const question = args.join(' ').trim();
 
     if (!question) {
-      await message.reply({
+      await reply({
         embeds: [
           buildErrorEmbed(
             `Please include a question after \`${ctx.prefix}ask\`.\n\n**Examples:**\n` +
@@ -66,11 +67,19 @@ export const askCommand = {
         .setFooter({ text: `${providerBadge}  ·  ${result.latencyMs}ms` })
         .setTimestamp(new Date(result.capturedAt));
 
-      await message.reply({ embeds: [embed] });
+      console.log(
+        `[ask] About to send reply (provider=${result.provider}, model=${result.model}, ` +
+        `latencyMs=${result.latencyMs}) for msg ${message.id}`
+      );
+      await reply({ embeds: [embed] });
+      console.log(`[ask] reply() resolved for msg ${message.id}`);
     } catch (err: any) {
       clearInterval(typingInterval);
       const isRateLimit = err.message?.includes('429') || err.message?.includes('Too many');
-      await message.reply({
+      console.log(
+        `[ask] About to send ERROR reply (isRateLimit=${isRateLimit}) for msg ${message.id}: ${err.message}`
+      );
+      await reply({
         embeds: [
           buildErrorEmbed(
             isRateLimit

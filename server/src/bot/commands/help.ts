@@ -8,6 +8,6 @@ export const helpCommand = {
   description: 'List all available commands.',
 
   async execute(_args: string[], message: Message, ctx: CommandContext): Promise<void> {
-    await message.reply({ embeds: [buildHelpEmbed(ctx.prefix)] });
+    await ctx.uniqueReply(message, { embeds: [buildHelpEmbed(ctx.prefix)] });
   },
 };

@@ -17,10 +17,73 @@
  */
 
 import { Client, GatewayIntentBits, Events, Message } from 'discord.js';
+import * as fs from 'fs';
+import * as path from 'path';
+import * as os from 'os';
+import * as crypto from 'crypto';
 import botConfig from './config';
 import { findCommand } from './commands/registry';
 import { buildErrorEmbed } from './utils/embeds';
 import { onAlert, getAlertSummaryForBot } from '../services/alertEngine';
+
+function getLockPath(): string {
+  const tokenHash = crypto.createHash('sha256').update(botConfig.token).digest('hex').slice(0, 16);
+  return process.env.DISCORD_BOT_LOCK_PATH
+    ? path.resolve(process.env.DISCORD_BOT_LOCK_PATH)
+    : path.join(os.tmpdir(), `office-power-monitor-discord-bot-${tokenHash}.lock`);
+}
+
+const LOCK_PATH = getLockPath();
+
+function isPidAlive(pid: number): boolean {
+  try {
+    process.kill(pid, 0);
+    return true;
+  } catch (err: any) {
+    return err.code === 'EPERM';
+  }
+}
+
+function acquireLock(): void {
+  if (fs.existsSync(LOCK_PATH)) {
+    try {
+      const existing = JSON.parse(fs.readFileSync(LOCK_PATH, 'utf8')) as {
+        pid: number;
+        startedAt: string;
+      };
+
+      if (existing?.pid && isPidAlive(existing.pid)) {
+        console.error(
+          `[discord] ABORT: another bot instance is already running ` +
+          `(pid=${existing.pid}, started=${existing.startedAt}). ` +
+          `Lock file: ${LOCK_PATH}`
+        );
+        process.exit(42);
+      }
+    } catch {
+      console.warn(`[discord] Unreadable lock file at ${LOCK_PATH}. Replacing.`);
+    }
+  }
+
+  fs.writeFileSync(
+    LOCK_PATH,
+    JSON.stringify({ pid: process.pid, startedAt: new Date().toISOString() })
+  );
+}
+
+function releaseLock(): void {
+  try {
+    if (fs.existsSync(LOCK_PATH)) {
+      const parsed = JSON.parse(fs.readFileSync(LOCK_PATH, 'utf8')) as { pid?: number };
+      if (parsed?.pid === process.pid) fs.unlinkSync(LOCK_PATH);
+    }
+  } catch {
+    /* best-effort */
+  }
+}
+
+acquireLock();
+process.on('exit', releaseLock);
 
 // ─── Discord client ───────────────────────────────────────────────────────────
 
@@ -46,6 +109,20 @@ client.once(Events.ClientReady, (c) => {
 
 // ─── Message handler ──────────────────────────────────────────────────────────
 
+const _repliedMessages = new Set<string>();
+
+function uniqueReply(message: Message, payload: unknown): Promise<unknown> {
+  if (_repliedMessages.has(message.id)) {
+    console.warn(`[discord] Skipping duplicate reply to message ${message.id}`);
+    return Promise.resolve();
+  }
+
+  _repliedMessages.add(message.id);
+  setTimeout(() => _repliedMessages.delete(message.id), 60 * 60 * 1000);
+
+  return message.reply(payload as any);
+}
+
 client.on(Events.MessageCreate, async (message: Message) => {
   // Ignore bots (including self)
   if (message.author.bot) return;
@@ -68,7 +145,7 @@ client.on(Events.MessageCreate, async (message: Message) => {
   const command = findCommand(trigger);
 
   if (!command) {
-    await message.reply({
+    await uniqueReply(message, {
       embeds: [
         buildErrorEmbed(
           `Unknown command: \`${botConfig.prefix}${trigger}\`\n` +
@@ -80,10 +157,10 @@ client.on(Events.MessageCreate, async (message: Message) => {
   }
 
   try {
-    await command.execute(args, message, { prefix: botConfig.prefix });
+    await command.execute(args, message, { prefix: botConfig.prefix, uniqueReply });
   } catch (err: any) {
     console.error(`[discord] Unhandled error in command "${trigger}":`, err);
-    await message.reply({
+    await uniqueReply(message, {
       embeds: [buildErrorEmbed(`An unexpected error occurred: \`${err.message}\``)],
     }).catch(() => { /* message may have been deleted */ });
   }
@@ -139,11 +216,13 @@ onAlert(async (alert) => {
 
 process.on('SIGTERM', () => {
   console.log('[discord] SIGTERM received, destroying client');
+  releaseLock();
   client.destroy();
   process.exit(0);
 });
 
 process.on('SIGINT', () => {
+  releaseLock();
   client.destroy();
   process.exit(0);
 });

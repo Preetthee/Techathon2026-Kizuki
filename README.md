@@ -1,107 +1,154 @@
-# ⚡ Office Power Monitor
+# Office Power Monitor
 
-Real-time office power monitoring system with a live dashboard, AI assistant, Discord bot,
-alert engine, and persistent storage.
+Real-time office power monitoring for a small workplace. The project combines a
+React dashboard, a Node.js backend, an alert engine, persistent storage, AI
+answers, and a Discord bot for command-based access.
 
----
+## A High-Level System Diagram
 
-## Architecture
+![A High-Level System Diagram](./A%20High-Level%20System%20Diagram.gif)
 
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│                        TWO PROJECTS                                  │
-│                                                                      │
-│  ┌─────────────────────────────┐   ┌──────────────────────────────┐ │
-│  │       server/               │   │         bot/                 │ │
-│  │   Node.js + Express         │   │   Discord.js standalone      │ │
-│  │   Socket.IO                 │◄──│   Connects via REST API      │ │
-│  │   MongoDB + SQLite          │   │   + Socket.IO client         │ │
-│  │   Alert Engine              │   │   Commands: !status !room    │ │
-│  │   AI Service (DeepSeek etc) │   │   !usage !alerts !ask        │ │
-│  │   Demo Mode                 │   └──────────────────────────────┘ │
-│  └──────────────┬──────────────┘                                     │
-│                 │ REST + WebSocket                                    │
-│  ┌──────────────▼──────────────┐                                     │
-│  │       src/ (frontend)       │                                     │
-│  │   React + Vite + Tailwind   │                                     │
-│  │   Real-time dashboard       │                                     │
-│  │   Demo Time Override        │                                     │
-│  └─────────────────────────────┘                                     │
-└─────────────────────────────────────────────────────────────────────┘
-```
+## What This Project Does
 
----
+- Tracks 15 simulated devices across three rooms.
+- Streams device, power usage, and alert updates in real time.
+- Detects after-hours usage and sustained high-load rooms.
+- Persists state with SQLite, with JSON fallback support.
+- Exposes REST APIs for dashboards, analytics, alerts, and AI questions.
+- Provides a Discord bot with live commands and critical alert push messages.
+- Supports AI providers including OpenAI, Gemini, DeepSeek, and Ollama.
 
-## Projects
+## Project Layout
 
-### [`server/`](./server/README.md) — Backend API + Frontend Serve
-Express REST API, Socket.IO real-time events, MongoDB analytics,
-SQLite/JSON state persistence, AI assistant, alert engine, and demo mode.
+| Path | Purpose |
+| --- | --- |
+| `src/` | React + Vite frontend dashboard |
+| `server/` | Express API, Socket.IO, storage, simulator, alerts, and AI service |
+| `bot/` | Standalone Discord bot that talks to the backend over REST and Socket.IO |
+| `guidelines/` | Project notes and implementation guidelines |
 
-### [`bot/`](./bot/README.md) — Discord Bot
-Standalone Discord bot that connects to `server/` via REST API and Socket.IO.
-Receives live data for commands and critical alert push notifications.
-
----
+The server also contains an in-process Discord bot under `server/src/bot/`.
+Use either the standalone `bot/` project or the server bot mode, not both with
+the same Discord token.
 
 ## Quick Start
 
-### 1. Backend server
+### 1. Start The Backend
 
 ```bash
 cd server
 npm install
-cp .env.example .env        # fill in your values
-npm run dev                 # starts on http://localhost:3001
+copy .env.example .env
+npm run dev
 ```
 
-### 2. Discord bot (separate terminal)
+The backend starts at `http://localhost:3001` by default.
+
+### 2. Start The Frontend
+
+From the project root:
+
+```bash
+npm install
+npm run dev
+```
+
+The dashboard is served by Vite, usually at `http://localhost:5173`.
+
+### 3. Start The Discord Bot
+
+In a separate terminal:
 
 ```bash
 cd bot
 npm install
-cp .env.example .env        # fill in your Discord token + API_BASE_URL
+copy .env.example .env
 npm run dev
 ```
 
-### 3. Frontend
+The backend must be running before the bot starts. Fill in the Discord token,
+client ID, channel ID, and API URL in `bot/.env`.
 
-The frontend is a Figma Make project and runs via the Figma Make canvas.
-To build standalone: `pnpm build` in the root directory.
+On macOS or Linux, use `cp .env.example .env` instead of `copy`.
 
----
+## Discord Commands
 
-## Environment Variables
+| Command | Aliases | Description |
+| --- | --- | --- |
+| `!status` | `!s`, `!devices`, `!all` | Show all rooms and live device wattage |
+| `!room <name>` | `!r` | Show detailed status for one room |
+| `!usage` | `!u`, `!power`, `!watts` | Show total and per-room power usage |
+| `!alerts` | `!a`, `!warn`, `!warnings` | Show active alerts |
+| `!ask <question>` | `!ai`, `!q`, `!query` | Ask the AI assistant about the live office state |
+| `!help` | `!h`, `!?`, `!commands` | Show the command list |
 
-| Project | File | Docs |
-|---------|------|------|
-| Backend | `server/.env.example` | [server/README.md](./server/README.md) |
-| Bot     | `bot/.env.example`    | [bot/README.md](./bot/README.md) |
+Example questions:
 
-> ⚠️ Never commit `.env` files. They are listed in `.gitignore`.
+```text
+!ask what rooms are consuming the most power?
+!ask is anything unusual happening?
+!ask summarize the office status
+```
 
----
+## Backend API Overview
 
-## Tech Stack
+| Area | Example Paths |
+| --- | --- |
+| Devices | `GET /devices`, `PATCH /devices/:id`, `POST /devices/:id/toggle` |
+| Rooms | `GET /rooms`, `GET /rooms/:name` |
+| Usage | `GET /usage`, `GET /usage/total`, `GET /usage/rooms` |
+| Alerts | `GET /alerts`, `GET /alerts/history`, `DELETE /alerts/:id` |
+| AI | `POST /ai/ask`, `GET /ai/context` |
+| Demo Mode | `GET /demo`, `POST /demo/set`, `DELETE /demo` |
+| Meta | `GET /health`, `GET /simulator` |
 
-| Layer | Technology |
-|-------|-----------|
-| Frontend | React 18, Vite, Tailwind CSS v4, Recharts |
-| Backend | Node.js, Express, TypeScript, Socket.IO |
-| Database | MongoDB (analytics), SQLite / JSON (state) |
-| Real-time | Socket.IO namespaces + rooms |
-| AI | OpenAI / DeepSeek / Gemini / Ollama |
-| Bot | Discord.js v14 |
-| Storage | better-sqlite3 (WAL mode), JSON fallback |
+Real-time events are available through the Socket.IO `/monitor` namespace.
 
----
+## Environment Files
 
-## Features
+Each runtime has its own example file:
 
-- **15 simulated devices** across 3 rooms (fans + lights), randomly toggled every 15–60 s
-- **Real-time Socket.IO** broadcasts: device updates, power usage, alerts
-- **Alert engine**: after-hours devices (after 5 PM), sustained load (all ON > 2 h)
-- **Demo Time Override**: click the clock in the dashboard to simulate any hour — alerts fire instantly, no data is saved
-- **AI assistant** (`!ask` in Discord or `POST /ai/ask`): answers questions about live device state using grounded context — no hallucination
-- **Persistent state**: SQLite or JSON fallback, auto-restored on restart
-- **Discord commands**: `!status`, `!room`, `!usage`, `!alerts`, `!ask`, `!help`
+| Project | Example File | Notes |
+| --- | --- | --- |
+| Backend | `server/.env.example` | API port, storage, MongoDB, AI providers, office rules |
+| Discord bot | `bot/.env.example` | Discord credentials and backend URL |
+
+Do not commit real `.env` files. They contain local secrets and are ignored by
+Git.
+
+## Main Scripts
+
+### Frontend
+
+```bash
+npm run dev
+npm run build
+```
+
+### Backend
+
+```bash
+cd server
+npm run dev
+npm run build
+npm start
+```
+
+### Discord Bot
+
+```bash
+cd bot
+npm run dev
+npm run build
+npm start
+```
+
+## Notes For Development
+
+- Run only one Discord bot process for a given token.
+- If every Discord command replies twice, stop all bot/server processes and
+  start only the bot mode you intend to use.
+- SQLite/JSON state files, build output, lock files, logs, and local
+  environment files are treated as local runtime artifacts.
+- More detailed backend and bot documentation is available in
+  `server/README.md` and `bot/README.md`.

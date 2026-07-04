@@ -8,6 +8,7 @@ import { askCommand     } from './ask';
 
 export interface CommandContext {
   prefix: string;
+  uniqueReply: (message: Message, payload: unknown) => Promise<unknown>;
 }
 
 export interface CommandHandler {

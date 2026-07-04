@@ -48,10 +48,11 @@ export const askCommand = {
   description: 'Ask the AI assistant about the office. Usage: `!ask <question>`',
 
   async execute(args: string[], message: Message, ctx: CommandContext): Promise<void> {
+    const reply = (payload: unknown) => ctx.uniqueReply(message, payload);
     const question = args.join(' ').trim();
 
     if (!question) {
-      await message.reply({
+      await reply({
         embeds: [
           buildErrorEmbed(
             `Please include a question after \`${ctx.prefix}ask\`.\n\n` +
@@ -66,11 +67,11 @@ export const askCommand = {
     }
 
     // Show typing indicator while the LLM thinks
-    await message.channel.sendTyping();
+    await (message.channel as unknown as { sendTyping: () => Promise<void> }).sendTyping();
 
     // Keep the typing indicator alive for slow providers
     const typingInterval = setInterval(
-      () => message.channel.sendTyping().catch(() => {}),
+      () => (message.channel as unknown as { sendTyping: () => Promise<void> }).sendTyping().catch(() => {}),
       8_000
     );
 
@@ -111,13 +112,13 @@ export const askCommand = {
         });
       }
 
-      await message.reply({ embeds: [embed] });
+      await reply({ embeds: [embed] });
 
     } catch (err: any) {
       clearInterval(typingInterval);
 
       const isRateLimit = err.statusCode === 429;
-      await message.reply({
+      await reply({
         embeds: [
           buildErrorEmbed(
             isRateLimit

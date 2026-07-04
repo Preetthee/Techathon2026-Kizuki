@@ -8,6 +8,8 @@ import { helpCommand    } from './help';
 
 export interface CommandContext {
   prefix: string;
+  /** Dedup-wrapped reply — uses underlying message.reply but only fires once per user message id. */
+  uniqueReply: (message: Message, payload: unknown) => Promise<unknown>;
 }
 
 export interface CommandHandler {

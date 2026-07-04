@@ -28,13 +28,14 @@ export const roomCommand = {
   aliases:     ['r'],
   description: 'Show detailed status for one room. Usage: `!room <name>`',
 
-  async execute(args: string[], message: Message, _ctx: CommandContext): Promise<void> {
+  async execute(args: string[], message: Message, ctx: CommandContext): Promise<void> {
+    const reply = (payload: unknown) => ctx.uniqueReply(message, payload);
     const rawInput = args.join(' ');
     const roomName = resolveRoomName(rawInput);
 
     if (!roomName) {
       const list = KNOWN_ROOMS.map((r) => `• ${r}`).join('\n');
-      await message.reply({
+      await reply({
         embeds: [buildErrorEmbed(`Room not recognised: **"${rawInput || '(none)'}"**\n\nAvailable rooms:\n${list}`)],
       });
       return;
@@ -44,10 +45,10 @@ export const roomCommand = {
     try {
       const room = await api.room(roomName);
       await typing;
-      await message.reply({ embeds: [buildRoomEmbed(room)] });
+      await reply({ embeds: [buildRoomEmbed(room)] });
     } catch (err: any) {
       await typing;
-      await message.reply({ embeds: [buildErrorEmbed(`Could not fetch data for **${roomName}**.\n\`${err.message}\``)] });
+      await reply({ embeds: [buildErrorEmbed(`Could not fetch data for **${roomName}**.\n\`${err.message}\``)] });
     }
   },
 };
