@@ -8,14 +8,6 @@ answers, and a Discord bot for command-based access.
 
 ![A High-Level System Diagram](./A%20High-Level%20System%20Diagram.gif)
 
-## Hardware / Electrical Schematic
-
-The representative one-room circuit is included in
-[`hardware/`](./hardware/README.md). It shows an ESP32 reading 2 fan states,
-3 light states, and a room-level current sensor. The same circuit is repeated
-for all three rooms.
-
-![One Room Hardware Schematic](./hardware/one-room-schematic.svg)
 
 ## What This Project Does
 
@@ -28,7 +20,7 @@ for all three rooms.
 - Supports AI providers including OpenAI, Gemini, DeepSeek, and Ollama.
 - Includes required system and hardware diagrams in the repository.
 
-## Epic Curcan
+## Tinker Cad
 
 ![Epic Curcan](./Epic%20Curcan.png)
 
